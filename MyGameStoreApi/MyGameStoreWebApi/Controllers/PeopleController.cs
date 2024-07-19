@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyGameStoreWebApi.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +17,14 @@ namespace MyGameStoreWebApi.Controllers
             Person alpha = new Person
             {
                 Id = 1,
-                Gender = Sex.male,
+                Gender = 1,
                 FirstName = "Alpha",
                 LastName = "Kamara"
             };
             Person ismail = new Person
             {
                 Id = 2,
-                Gender = Sex.male,
+                Gender = 1,
                 FirstName = "Ismail",
                 LastName = "Kamara"
             };
