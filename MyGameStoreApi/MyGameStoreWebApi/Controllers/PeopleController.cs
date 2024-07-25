@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyGameStoreWebApi.DAL;
 using MyGameStoreWebApi.Model;
-using System;
-using System.Collections.Generic;
+using MyGameStoreWebApi.Model.DTO;
 using System.Linq;
 
 namespace MyGameStoreWebApi.Controllers
@@ -11,61 +11,69 @@ namespace MyGameStoreWebApi.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        private static List<Person> _people = new List<Person>();
-        static PeopleController()
+        private GameStoreContext _gameStoreContext;
+        public PeopleController(GameStoreContext gameStoreContext)
         {
-            Person alpha = new Person
-            {
-                Id = 1,
-                Gender = 1,
-                FirstName = "Alpha",
-                LastName = "Kamara"
-            };
-            Person ismail = new Person
-            {
-                Id = 2,
-                Gender = 1,
-                FirstName = "Ismail",
-                LastName = "Kamara"
-            };
-            _people.Add(alpha);
-            _people.Add(ismail);
-
+            _gameStoreContext = gameStoreContext;
         }
-
+        #region Person Crud operations
         //ophalen van mensen
         [HttpGet]
         public IActionResult GetPeople()
         {
-            return Ok(_people);
+            var result = _gameStoreContext.Persons;
+            if (result.Any() == false)
+            {
+                return NotFound(new { message = "The person list is empty"});
+            }
+            return Ok(result);
         }
-        // mensen toevoegen
-        [HttpPost]
-        public IActionResult CreatePerson([FromBody] Person person)
+        //ophalen van een person volgens id
+        [HttpGet("{id}")]
+        public IActionResult GetPeopleId(int id)
         {
-            _people.Add(person);
-            return Ok(_people);
+            var result = _gameStoreContext.Persons.Where(p => p.Id == id).FirstOrDefault();
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        // persoon toevoegen
+        [HttpPost]
+        public IActionResult CreatePerson([FromBody] CreatePersonDto personDto)
+        {
+            var person = new Person
+            {
+                FirstName = personDto.FirstName,
+                LastName = personDto.LastName,
+                Gender = personDto.Gender,
+                Email = personDto.Email,
+                StoreId = personDto.StoreId
+
+            };
+            _gameStoreContext.Persons.Add(person);
+            _gameStoreContext.SaveChanges();
+            return Ok();
         }
 
-        // aanpassen van mensen
+        // aanpassen van een persoongegevens
         [HttpPut]
         public IActionResult UpdatePeople([FromBody] Person updatedPerson)
         {
-            var person = _people.FirstOrDefault(p => p.Id == updatedPerson.Id);
-            if (person == null)
+            var result = _gameStoreContext.Persons.Where(p => p.Id == updatedPerson.Id).FirstOrDefault();
+            if (result == null)
             {
-                return NotFound(new { message = "A Person with this Id is not found" });
+                return NotFound(new { message = "Person with this id is not found" });
             }
-            //person properties update
-            person.FirstName = updatedPerson.FirstName ?? person.FirstName;
-            person.LastName = updatedPerson.LastName ?? person.LastName;
-            person.Gender = updatedPerson.Gender;
-            return Ok(_people);
+            _gameStoreContext.Update(updatedPerson);
+            _gameStoreContext.SaveChanges();
+            return Ok(result);
         }
 
-        // mensen verwijderen
+        // persoon verwijderen
         // mensen alleen verwijderen als de juiste api key mee is gegeven 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeletePerson(int id,[FromHeader(Name = "X-AccesKey")] string key)
         {
             //checken als de juiste api key is meegegeven
@@ -74,46 +82,18 @@ namespace MyGameStoreWebApi.Controllers
             {
                 return Unauthorized(new { message = "Invalid or missing API key" });
             }
-            var person = _people.FirstOrDefault(p => p.Id == id);
+            var person = _gameStoreContext.Persons.Where(p => p.Id == id).FirstOrDefault();
 
             if (person != null)
             {
-                _people.Remove(person);
+                Person person1 = new() { Id = id };
+                _gameStoreContext.Remove(person1);
+                _gameStoreContext.SaveChanges();
                 return NoContent();
             }
             return NotFound(new { message = "person not found" });
         }
-        //opvragen van een persoon an de hand van de id
-        [HttpGet("{id:int}")]
-        public IActionResult GetPersonById(int? id)
-        {
-            if (!id.HasValue)
-            {
-                return BadRequest("Id is required");
-            }
-            var person = _people.FirstOrDefault(p => p.Id == id);
-            if (person != null)
-            {
-                return Ok(person);
-            }
-            return NotFound(new { message = "Person not found" });
-        }
-
-        //opvragen van person aan de hand van de lastname
-        [Route ("{lastName}")]
-        [HttpGet]
-        public IActionResult GetPersonByLastName(string lastName)
-        {
-            if (string.IsNullOrEmpty(lastName))
-            {
-                return NoContent();
-            }
-            var person = _people.Where(p => p.LastName.ToLower() == lastName.ToLower()).ToList();
-            if(person != null)
-            {
-                return Ok(person);
-            }
-            return NotFound(new { message = "Person not found" });
-        }
+        #endregion
+       
     }
 }

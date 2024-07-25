@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyGameStoreWebApi.DAL;
 
 namespace MyGameStoreWebApi.Migrations
 {
     [DbContext(typeof(GameStoreContext))]
-    partial class GameStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240725175845_MakeStoreIdNullable")]
+    partial class MakeStoreIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,8 +87,7 @@ namespace MyGameStoreWebApi.Migrations
                 {
                     b.HasOne("MyGameStoreWebApi.Model.Store", "Store")
                         .WithMany("Persons")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("StoreId");
 
                     b.Navigation("Store");
                 });
