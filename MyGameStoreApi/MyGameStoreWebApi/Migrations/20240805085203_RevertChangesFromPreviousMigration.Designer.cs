@@ -10,8 +10,8 @@ using MyGameStoreWebApi.DAL;
 namespace MyGameStoreWebApi.Migrations
 {
     [DbContext(typeof(GameStoreContext))]
-    [Migration("20240725175845_MakeStoreIdNullable")]
-    partial class MakeStoreIdNullable
+    [Migration("20240805085203_RevertChangesFromPreviousMigration")]
+    partial class RevertChangesFromPreviousMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -87,7 +87,8 @@ namespace MyGameStoreWebApi.Migrations
                 {
                     b.HasOne("MyGameStoreWebApi.Model.Store", "Store")
                         .WithMany("Persons")
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Store");
                 });
