@@ -12,6 +12,7 @@ using MyGameStoreWebApi.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MyGameStoreWebApi
@@ -35,6 +36,11 @@ namespace MyGameStoreWebApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyGameStoreWebApi", Version = "v1" });
             });
             services.AddDbContext<GameStoreContext>(options => options.UseSqlServer("name=ConnectionStrings:MyGameStore"));
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

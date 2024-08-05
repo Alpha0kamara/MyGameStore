@@ -27,6 +27,7 @@ namespace MyGameStoreWebApi.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("EmailAddress");
@@ -41,17 +42,58 @@ namespace MyGameStoreWebApi.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("StoreId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("StoreId");
 
                     b.ToTable("tblPeople", "Person");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "john.doe@example.com",
+                            FirstName = "John",
+                            Gender = 1,
+                            LastName = "Doe",
+                            StoreId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "jane.smith@example.com",
+                            FirstName = "Jane",
+                            Gender = 2,
+                            LastName = "Smith",
+                            StoreId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "mike.johnson@example.com",
+                            FirstName = "Mike",
+                            Gender = 1,
+                            LastName = "Johnson",
+                            StoreId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "emily.brown@example.com",
+                            FirstName = "Emily",
+                            Gender = 2,
+                            LastName = "Brown",
+                            StoreId = 2
+                        });
                 });
 
             modelBuilder.Entity("MyGameStoreWebApi.Model.Store", b =>
@@ -95,7 +137,32 @@ namespace MyGameStoreWebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("tblStores", "Store");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "GameCity",
+                            IsFranchiseStore = false,
+                            Name = "GameStore",
+                            Number = "1",
+                            Street = "GameStreet",
+                            Zipcode = "1234AB"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            City = "GymeCity",
+                            IsFranchiseStore = true,
+                            Name = "GymeStore",
+                            Number = "2",
+                            Street = "GymeStreet",
+                            Zipcode = "1234AB"
+                        });
                 });
 
             modelBuilder.Entity("MyGameStoreWebApi.Model.Person", b =>

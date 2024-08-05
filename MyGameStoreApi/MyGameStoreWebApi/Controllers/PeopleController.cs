@@ -41,16 +41,14 @@ namespace MyGameStoreWebApi.Controllers
         }
         // persoon toevoegen
         [HttpPost]
-        public IActionResult CreatePerson([FromBody] CreatePersonDto personDto)
+        public IActionResult CreatePerson([FromBody] PersonDTO personDto)
         {
             var person = new Person
             {
                 FirstName = personDto.FirstName,
                 LastName = personDto.LastName,
                 Gender = personDto.Gender,
-                Email = personDto.Email,
-                StoreId = personDto.StoreId
-
+                Email = personDto.Email
             };
             _gameStoreContext.Persons.Add(person);
             _gameStoreContext.SaveChanges();

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MyGameStoreWebApi.DAL;
 using MyGameStoreWebApi.Model;
+using MyGameStoreWebApi.Model.DTO;
 using System.Linq;
 
 namespace MyGameStoreWebApi.Controllers
@@ -27,12 +29,32 @@ namespace MyGameStoreWebApi.Controllers
         [HttpGet]
         public IActionResult GetAllStores()
         {
-            var result = _storeContext.Stores;
-            if (result.Any() == false)
+            var stores = _storeContext.Stores.AsNoTracking().Include(s => s.Persons).ToList();
+            var storeDTos = stores.Select(s => new StoreDTO
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Street = s.Street,
+                Number = s.Number,
+                Addition = s.Addition,
+                Zipcode = s.Zipcode,
+                City = s.City,
+                IsFranchiseStore = s.IsFranchiseStore,
+                Persons = s.Persons.Select(p => new PersonDTO
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Gender = p.Gender,
+                    Email = p.Email
+                }).ToList()
+            }).ToList();
+
+            if (!stores.Any())
             {
                 return NoContent();
             }
-            return Ok(result);
+            return Ok(stores);
         }
         //get an store by the id of the store
         [HttpGet("{id}")]
@@ -47,7 +69,7 @@ namespace MyGameStoreWebApi.Controllers
         }
         //update an store
         [HttpPut]
-        public IActionResult UpdateStoreById([FromBody] Store UpdateStore)
+        public IActionResult UpdateStoreById([FromBody] StoreDTO UpdateStore)
         {
             var result = _storeContext.Stores.Where(s => s.Id == UpdateStore.Id).FirstOrDefault();
             if(result == null)

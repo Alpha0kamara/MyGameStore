@@ -2,7 +2,7 @@
 
 namespace MyGameStoreWebApi.Migrations
 {
-    public partial class AddedDataAnnotationForPersonStore : Migration
+    public partial class AddedDataSeed : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -127,8 +127,8 @@ namespace MyGameStoreWebApi.Migrations
                 name: "LastName",
                 schema: "Person",
                 table: "tblPeople",
-                type: "nvarchar(70)",
-                maxLength: 70,
+                type: "nvarchar(50)",
+                maxLength: 50,
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
@@ -153,7 +153,8 @@ namespace MyGameStoreWebApi.Migrations
                 table: "tblPeople",
                 type: "nvarchar(100)",
                 maxLength: 100,
-                nullable: true,
+                nullable: false,
+                defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)",
                 oldNullable: true);
@@ -169,6 +170,44 @@ namespace MyGameStoreWebApi.Migrations
                 schema: "Person",
                 table: "tblPeople",
                 column: "Id");
+
+            migrationBuilder.InsertData(
+                schema: "Store",
+                table: "tblStores",
+                columns: new[] { "Id", "Addition", "Place", "IsFranchiseStore", "Name", "Number", "Street", "Zipcode" },
+                values: new object[] { 1, null, "GameCity", false, "GameStore", "1", "GameStreet", "1234AB" });
+
+            migrationBuilder.InsertData(
+                schema: "Store",
+                table: "tblStores",
+                columns: new[] { "Id", "Addition", "Place", "IsFranchiseStore", "Name", "Number", "Street", "Zipcode" },
+                values: new object[] { 2, null, "GymeCity", true, "GymeStore", "2", "GymeStreet", "1234AB" });
+
+            migrationBuilder.InsertData(
+                schema: "Person",
+                table: "tblPeople",
+                columns: new[] { "Id", "EmailAddress", "FirstName", "Gender", "LastName", "StoreId" },
+                values: new object[,]
+                {
+                    { 1, "john.doe@example.com", "John", 1, "Doe", 1 },
+                    { 2, "jane.smith@example.com", "Jane", 2, "Smith", 1 },
+                    { 3, "mike.johnson@example.com", "Mike", 1, "Johnson", 2 },
+                    { 4, "emily.brown@example.com", "Emily", 2, "Brown", 2 }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblStores_Name",
+                schema: "Store",
+                table: "tblStores",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblPeople_EmailAddress",
+                schema: "Person",
+                table: "tblPeople",
+                column: "EmailAddress",
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_tblPeople_tblStores_StoreId",
@@ -193,10 +232,56 @@ namespace MyGameStoreWebApi.Migrations
                 schema: "Store",
                 table: "tblStores");
 
+            migrationBuilder.DropIndex(
+                name: "IX_tblStores_Name",
+                schema: "Store",
+                table: "tblStores");
+
             migrationBuilder.DropPrimaryKey(
                 name: "PK_tblPeople",
                 schema: "Person",
                 table: "tblPeople");
+
+            migrationBuilder.DropIndex(
+                name: "IX_tblPeople_EmailAddress",
+                schema: "Person",
+                table: "tblPeople");
+
+            migrationBuilder.DeleteData(
+                schema: "Person",
+                table: "tblPeople",
+                keyColumn: "Id",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                schema: "Person",
+                table: "tblPeople",
+                keyColumn: "Id",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                schema: "Person",
+                table: "tblPeople",
+                keyColumn: "Id",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                schema: "Person",
+                table: "tblPeople",
+                keyColumn: "Id",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                schema: "Store",
+                table: "tblStores",
+                keyColumn: "Id",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                schema: "Store",
+                table: "tblStores",
+                keyColumn: "Id",
+                keyValue: 2);
 
             migrationBuilder.DropColumn(
                 name: "Number",
@@ -287,8 +372,8 @@ namespace MyGameStoreWebApi.Migrations
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(70)",
-                oldMaxLength: 70);
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50);
 
             migrationBuilder.AlterColumn<string>(
                 name: "FirstName",
@@ -306,8 +391,7 @@ namespace MyGameStoreWebApi.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(100)",
-                oldMaxLength: 100,
-                oldNullable: true);
+                oldMaxLength: 100);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Stores",

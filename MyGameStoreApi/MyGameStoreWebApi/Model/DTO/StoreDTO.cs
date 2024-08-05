@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyGameStoreWebApi.Model
+namespace MyGameStoreWebApi.Model.DTO
 {
-    public class Store
+    public class StoreDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -14,6 +12,6 @@ namespace MyGameStoreWebApi.Model
         public string Zipcode { get; set; }
         public string City { get; set; }
         public bool IsFranchiseStore { get; set; }
-        public List<Person> Persons { get; set; }
+        public List<PersonDTO> Persons { get; set; }
     }
 }
